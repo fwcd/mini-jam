@@ -173,9 +173,9 @@ extension Array {
     /// Performs a "running reduce" on the array with at least one element in the array.
     public func scan1<R>(_ initializer: (Element) -> R, _ accumulator: (R, Element) -> R) -> [R] {
         guard let f = first else { return [] }
-        var result = [R]()
+        var result = [initializer(f)]
         for elem in dropFirst() {
-            result.append(accumulator(result.last ?? initializer(f), elem))
+            result.append(accumulator(result.last!, elem))
         }
         return result
     }
@@ -191,7 +191,7 @@ struct PianoView: View {
     var body: some View {
         let whiteWidth: CGFloat = 20
         let blackWidth: CGFloat = 10
-        let offsetKeys = notes.scan1({ (0, $0) }) { (entry, note) in
+        let keys = notes.scan1({ (0, $0) }) { (entry, note) in
             let newX = entry.0 + (note.hasAccidental ? 0 : whiteWidth)
             return (newX, note)
         }.map { entry in PianoKeyView(
@@ -202,13 +202,13 @@ struct PianoView: View {
         ) {
             print("Playing \(entry.1)")
         }
-            .offset(x: entry.0 + (entry.1.hasAccidental ? whiteWidth : -(whiteWidth / 2)))
+            .offset(x: entry.0 + (entry.1.hasAccidental ? whiteWidth - (blackWidth / 2) : 0))
             .zIndex(entry.1.hasAccidental ? 1 : 0)
         }
         
-        return ZStack(alignment: .top) {
-            ForEach(0..<offsetKeys.count) {
-                offsetKeys[$0]
+        return ZStack(alignment: .topLeading) {
+            ForEach(0..<keys.count) {
+                keys[$0]
             }
         }
     }
