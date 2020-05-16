@@ -48,13 +48,14 @@ public enum NoteClass: Int, CaseIterable, CustomStringConvertible, Comparable, H
 }
 
 /// An octaved note.
-public struct Note: CustomStringConvertible, Hashable, Comparable, Strideable {
+public struct Note: CustomStringConvertible, Hashable, Identifiable, Comparable, Strideable {
     public let noteClass: NoteClass
     public let octave: Int
     
     public var description: String { "\(noteClass)\(octave)" }
     public var numValue: Int { (octave * NoteClass.allCases.count) + noteClass.rawValue }
     public var hasAccidental: Bool { noteClass.hasAccidental }
+    public var id: Int { numValue }
     
     public init(numValue: Int) {
         noteClass = NoteClass(rawValue: numValue % NoteClass.allCases.count)!
@@ -151,11 +152,32 @@ struct PianoKeyView: View {
     
     var body: some View {
         Rectangle()
-            .fill(note.hasAccidental ? Color.black : nil, stroke: note.hasAccidental ? nil : Color.gray)
+            .fill(note.hasAccidental ? Color.black : Color.white, stroke: note.hasAccidental ? nil : Color.gray)
             .frame(width: frame.width, height: frame.height)
             .onTapGesture {
                 self.action()
             }
+    }
+}
+
+extension Array {
+    /// Performs a "running reduce" on the array.
+    public func scan<R>(_ base: R, _ accumulator: (R, Element) -> R) -> [R] {
+        var result = [R]()
+        for elem in self {
+            result.append(accumulator(result.last ?? base, elem))
+        }
+        return result
+    }
+    
+    /// Performs a "running reduce" on the array with at least one element in the array.
+    public func scan1<R>(_ initializer: (Element) -> R, _ accumulator: (R, Element) -> R) -> [R] {
+        guard let f = first else { return [] }
+        var result = [R]()
+        for elem in dropFirst() {
+            result.append(accumulator(result.last ?? initializer(f), elem))
+        }
+        return result
     }
 }
 
@@ -167,12 +189,26 @@ struct PianoView: View {
     }
     
     var body: some View {
-        HStack {
-            ForEach(0..<notes.count) { i in
-                PianoKeyView(note: self.notes[i], frame: CGSize(width: 20, height: 100)) {
-                    print("Playing \(self.notes[i])")
-                }
-                    .offset(x: CGFloat(i))
+        let whiteWidth: CGFloat = 20
+        let blackWidth: CGFloat = 10
+        let offsetKeys = notes.scan1({ (0, $0) }) { (entry, note) in
+            let newX = entry.0 + (note.hasAccidental ? 0 : whiteWidth)
+            return (newX, note)
+        }.map { entry in PianoKeyView(
+            note: entry.1,
+            frame: entry.1.hasAccidental
+                ? CGSize(width: blackWidth, height: 80)
+                : CGSize(width: whiteWidth, height: 100)
+        ) {
+            print("Playing \(entry.1)")
+        }
+            .offset(x: entry.0 + (entry.1.hasAccidental ? whiteWidth : -(whiteWidth / 2)))
+            .zIndex(entry.1.hasAccidental ? 1 : 0)
+        }
+        
+        return ZStack(alignment: .top) {
+            ForEach(0..<offsetKeys.count) {
+                offsetKeys[$0]
             }
         }
     }
@@ -191,7 +227,7 @@ struct MiniJamView: View {
                     .font(.subheadline)
                     .foregroundColor(.black)
                 TimelineView(tracks: $tracks)
-                PianoView(notes: Note(.c, octave: 0)..<Note(.c, octave: 1))
+                PianoView(notes: Note(.c, octave: 0)...Note(.c, octave: 1))
             }
         }
     }
