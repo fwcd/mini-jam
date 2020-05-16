@@ -25,6 +25,12 @@ struct Note {
     let noteClass: NoteClass
     let accidental: Accidental?
     let octave: Int
+    
+    init(_ noteClass: NoteClass, _ accidental: Accidental? = nil, octave: Int = 0) {
+        self.noteClass = noteClass
+        self.accidental = accidental
+        self.octave = octave
+    }
 }
 
 /// A MIDI track containing the recorded instrument.
@@ -73,6 +79,48 @@ struct TimelineView: View {
     }
 }
 
+extension Shape {
+    func fill<S>(_ fill: S?, stroke: Color?) -> some View where S: ShapeStyle {
+        ZStack {
+            if fill != nil {
+                self.fill(fill!)
+            }
+            if stroke != nil {
+                self.stroke(stroke!)
+            }
+        }
+    }
+}
+
+struct PianoKeyView: View {
+    private let note: Note
+    private let frame: CGSize
+    private let action: () -> Void
+    
+    init(note: Note, frame: CGSize, action: @escaping () -> Void) {
+        self.note = note
+        self.frame = frame
+        self.action = action
+    }
+    
+    var body: some View {
+        Rectangle()
+            .fill(note.accidental.map { _ in Color.black }, stroke: note.accidental.flatMap { _ in nil } ?? Color.gray)
+            .frame(width: frame.width, height: frame.height)
+            .onTapGesture {
+                self.action()
+            }
+    }
+}
+
+struct PianoView: View {
+    var body: some View {
+        PianoKeyView(note: Note(.c, .sharp), frame: CGSize(width: 20, height: 100)) {
+            print("Playing note")
+        }
+    }
+}
+
 struct MiniJamView: View {
     @State private var tracks: [Track] = []
     
@@ -86,6 +134,7 @@ struct MiniJamView: View {
                     .font(.subheadline)
                     .foregroundColor(.black)
                 TimelineView(tracks: $tracks)
+                PianoView()
             }
         }
     }
