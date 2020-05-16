@@ -141,22 +141,23 @@ extension Shape {
 
 struct PianoKeyView: View {
     private let note: Note
-    private let frame: CGSize
-    private let action: () -> Void
+    private let size: CGSize
+    private let pressed: Bool
     
-    init(note: Note, frame: CGSize, action: @escaping () -> Void) {
+    init(note: Note, size: CGSize, pressed: Bool) {
         self.note = note
-        self.frame = frame
-        self.action = action
+        self.size = size
+        self.pressed = pressed
     }
     
     var body: some View {
         Rectangle()
-            .fill(note.hasAccidental ? Color.black : Color.white, stroke: note.hasAccidental ? nil : Color.gray)
-            .frame(width: frame.width, height: frame.height)
-            .onTapGesture {
-                self.action()
-            }
+            .fill(pressed
+                ? Color.gray
+                : note.hasAccidental
+                    ? Color.black
+                    : Color.white, stroke: note.hasAccidental ? nil : Color.gray)
+            .frame(width: size.width, height: size.height)
     }
 }
 
@@ -184,26 +185,37 @@ extension Array {
 struct PianoView: View {
     private let notes: [Note]
     
+    @GestureState private var pressedKey: Note? = nil
+    
     init<S>(notes: S) where S: Sequence, S.Element == Note {
         self.notes = Array(notes)
     }
     
-    var body: some View {
+    var keyBounds: [(Note, CGRect)] {
         let whiteWidth: CGFloat = 20
         let blackWidth: CGFloat = 10
-        let keys = notes.scan1({ (0, $0) }) { (entry, note) in
+        
+        return notes.scan1({ (CGFloat(0), $0) }) { (entry, note) in
             let newX = entry.0 + (note.hasAccidental ? 0 : whiteWidth)
             return (newX, note)
-        }.map { entry in PianoKeyView(
-            note: entry.1,
-            frame: entry.1.hasAccidental
+        }.map { entry in
+            let x = entry.0 + (entry.1.hasAccidental ? whiteWidth - (blackWidth / 2) : 0)
+            let size = entry.1.hasAccidental
                 ? CGSize(width: blackWidth, height: 80)
                 : CGSize(width: whiteWidth, height: 100)
-        ) {
-            print("Playing \(entry.1)")
+            return (entry.1, CGRect(origin: CGPoint(x: x, y: 0), size: size))
         }
-            .padding(.leading, entry.0 + (entry.1.hasAccidental ? whiteWidth - (blackWidth / 2) : 0))
-            .zIndex(entry.1.hasAccidental ? 1 : 0)
+    }
+    
+    var body: some View {
+        let keys = keyBounds.map {
+            PianoKeyView(
+                note: $0.0,
+                size: $0.1.size,
+                pressed: pressedKey == $0.0
+            )
+                .padding(.leading, $0.1.minX)
+                .zIndex($0.0.hasAccidental ? 1 : 0)
         }
         
         return ZStack(alignment: .topLeading) {
@@ -211,6 +223,23 @@ struct PianoView: View {
                 keys[$0]
             }
         }
+            .gesture(
+                DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                    .updating($pressedKey) { (value, state, _) in
+                        state = self.keyBounds.first(where: { $0.1.contains(value.location) })?.0
+                    }
+                    .onChanged { _ in
+                        DispatchQueue.global().async {
+                            if let note = self.pressedKey {
+                                self.play(note: note)
+                            }
+                        }
+                    }
+            )
+    }
+    
+    func play(note: Note) {
+        print("Playing \(note)")
     }
 }
 
