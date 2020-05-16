@@ -2,13 +2,16 @@ import SwiftUI
 
 public struct PianoView: View {
     private let notes: [Note]
+    private let synthesizer: Synthesizer
+    
     private let whiteKeySize: CGSize
     private let blackKeySize: CGSize
     
     @GestureState private var pressedKey: Note? = nil
     
-    public init<S>(notes: S, whiteKeySize: CGSize = CGSize(width: 20, height: 100), blackKeySize: CGSize = CGSize(width: 10, height: 80)) where S: Sequence, S.Element == Note {
+    public init<S>(notes: S, synthesizer: Synthesizer, whiteKeySize: CGSize = CGSize(width: 20, height: 100), blackKeySize: CGSize = CGSize(width: 10, height: 80)) where S: Sequence, S.Element == Note {
         self.notes = Array(notes)
+        self.synthesizer = synthesizer
         self.whiteKeySize = whiteKeySize
         self.blackKeySize = blackKeySize
     }
@@ -56,6 +59,10 @@ public struct PianoView: View {
     }
     
     func play(note: Note) {
-        print("Playing \(note)")
+        do {
+            try synthesizer.play(note: note)
+        } catch {
+            print("Could not play note \(note) using synthesizer: \(error)")
+        }
     }
 }

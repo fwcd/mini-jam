@@ -4,6 +4,7 @@ import SwiftUI
 import PlaygroundSupport
 
 struct MiniJamView: View {
+    private let synthesizer = try! Synthesizer()
     @State private var tracks: [Track] = []
     
     var body: some View {
@@ -18,6 +19,7 @@ struct MiniJamView: View {
                 TimelineView(tracks: $tracks)
                 PianoView(
                     notes: Note(.c, octave: 0)...Note(.c, octave: 1),
+                    synthesizer: synthesizer,
                     whiteKeySize: CGSize(width: 40, height: 150),
                     blackKeySize: CGSize(width: 20, height: 100)
                 )
