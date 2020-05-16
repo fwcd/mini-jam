@@ -202,7 +202,7 @@ struct PianoView: View {
         ) {
             print("Playing \(entry.1)")
         }
-            .offset(x: entry.0 + (entry.1.hasAccidental ? whiteWidth - (blackWidth / 2) : 0))
+            .padding(.leading, entry.0 + (entry.1.hasAccidental ? whiteWidth - (blackWidth / 2) : 0))
             .zIndex(entry.1.hasAccidental ? 1 : 0)
         }
         
