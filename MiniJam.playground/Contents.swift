@@ -3,8 +3,17 @@
 import SwiftUI
 import PlaygroundSupport
 
+let samples = Bundle.main.urls(forResourcesWithExtension: "mp3", subdirectory: "Samples")!
+
+let synthesizer: Synthesizer
+    
+do {
+    synthesizer = try Synthesizer(sampleURLs: samples)
+} catch {
+    fatalError("Could not create synthesizer: \(error)")
+}
+
 struct MiniJamView: View {
-    private let synthesizer = try! Synthesizer()
     @State private var tracks: [Track] = []
     
     var body: some View {
@@ -29,5 +38,6 @@ struct MiniJamView: View {
 }
 
 // Present the view in Playground
+PlaygroundPage.current.needsIndefiniteExecution = true
 PlaygroundPage.current.setLiveView(MiniJamView())
 

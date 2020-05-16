@@ -55,14 +55,25 @@ public struct PianoView: View {
                             }
                         }
                     }
+                    .onEnded { _ in
+                        self.stop()
+                    }
             )
     }
     
-    func play(note: Note) {
+    private func play(note: Note) {
         do {
-            try synthesizer.play(note: note)
+            try synthesizer.start(note: note)
         } catch {
             print("Could not play note \(note) using synthesizer: \(error)")
+        }
+    }
+    
+    private func stop() {
+        do {
+            try synthesizer.stop()
+        } catch {
+            print("Could not stpo note using synthesizer: \(error)")
         }
     }
 }
