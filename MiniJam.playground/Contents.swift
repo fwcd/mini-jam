@@ -16,7 +16,11 @@ struct MiniJamView: View {
                     .font(.subheadline)
                     .foregroundColor(.black)
                 TimelineView(tracks: $tracks)
-                PianoView(notes: Note(.c, octave: 0)...Note(.c, octave: 1))
+                PianoView(
+                    notes: Note(.c, octave: 0)...Note(.c, octave: 1),
+                    whiteKeySize: CGSize(width: 40, height: 150),
+                    blackKeySize: CGSize(width: 20, height: 100)
+                )
             }
         }
     }

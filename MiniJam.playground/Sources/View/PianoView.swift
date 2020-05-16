@@ -2,25 +2,24 @@ import SwiftUI
 
 public struct PianoView: View {
     private let notes: [Note]
+    private let whiteKeySize: CGSize
+    private let blackKeySize: CGSize
     
     @GestureState private var pressedKey: Note? = nil
     
-    public init<S>(notes: S) where S: Sequence, S.Element == Note {
+    public init<S>(notes: S, whiteKeySize: CGSize = CGSize(width: 20, height: 100), blackKeySize: CGSize = CGSize(width: 10, height: 80)) where S: Sequence, S.Element == Note {
         self.notes = Array(notes)
+        self.whiteKeySize = whiteKeySize
+        self.blackKeySize = blackKeySize
     }
     
     public var keyBounds: [(Note, CGRect)] {
-        let whiteWidth: CGFloat = 20
-        let blackWidth: CGFloat = 10
-        
         return notes.scan1({ (CGFloat(0), $0) }) { (entry, note) in
-            let newX = entry.0 + (note.hasAccidental ? 0 : whiteWidth)
+            let newX = entry.0 + (note.hasAccidental ? 0 : whiteKeySize.width)
             return (newX, note)
         }.map { entry in
-            let x = entry.0 + (entry.1.hasAccidental ? whiteWidth - (blackWidth / 2) : 0)
-            let size = entry.1.hasAccidental
-                ? CGSize(width: blackWidth, height: 80)
-                : CGSize(width: whiteWidth, height: 100)
+            let x = entry.0 + (entry.1.hasAccidental ? whiteKeySize.width - (blackKeySize.width / 2) : 0)
+            let size = entry.1.hasAccidental ? blackKeySize : whiteKeySize
             return (entry.1, CGRect(origin: CGPoint(x: x, y: 0), size: size))
         }
     }
