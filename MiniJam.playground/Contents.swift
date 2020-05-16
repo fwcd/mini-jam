@@ -160,9 +160,20 @@ struct PianoKeyView: View {
 }
 
 struct PianoView: View {
+    private let notes: [Note]
+    
+    init<S>(notes: S) where S: Sequence, S.Element == Note {
+        self.notes = Array(notes)
+    }
+    
     var body: some View {
-        PianoKeyView(note: Note(.cSharpDFlat), frame: CGSize(width: 20, height: 100)) {
-            print("Playing note")
+        HStack {
+            ForEach(0..<notes.count) { i in
+                PianoKeyView(note: self.notes[i], frame: CGSize(width: 20, height: 100)) {
+                    print("Playing \(self.notes[i])")
+                }
+                    .offset(x: CGFloat(i))
+            }
         }
     }
 }
@@ -180,7 +191,7 @@ struct MiniJamView: View {
                     .font(.subheadline)
                     .foregroundColor(.black)
                 TimelineView(tracks: $tracks)
-                PianoView()
+                PianoView(notes: Note(.c, octave: 0)..<Note(.c, octave: 1))
             }
         }
     }
