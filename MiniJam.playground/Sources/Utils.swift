@@ -18,3 +18,9 @@ extension Array {
         return result
     }
 }
+
+func compareAscending<C, T>(by mapper: @escaping (C) -> T) -> (C, C) -> Bool where T: Comparable {
+    {
+        mapper($0) < mapper($1)
+    }
+}

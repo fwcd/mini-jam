@@ -43,7 +43,7 @@ public struct PianoView: View {
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                     .updating($pressedKey) { (value, state, _) in
-                        state = self.keyBounds.first(where: { $0.1.contains(value.location) })?.0
+                        state = self.keyBounds.filter { $0.1.contains(value.location) }.max(by: compareAscending { $0.0.hasAccidental ? 1 : 0 })?.0
                     }
                     .onChanged { _ in
                         DispatchQueue.global().async {
