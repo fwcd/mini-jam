@@ -1,3 +1,3 @@
-public protocol Harmony {
+public protocol Chord {
     var notes: [Note] { get }
 }

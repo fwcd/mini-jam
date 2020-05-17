@@ -1,4 +1,4 @@
-public struct MajorTriad: Harmony {
+public struct MajorTriad: Chord {
     public let notes: [Note]
     
     public init(root: Note) {

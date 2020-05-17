@@ -7,17 +7,17 @@ public struct PianoView: View {
     private let whiteKeySize: CGSize
     private let blackKeySize: CGSize
     
-    private let autoHarmony: ((Note) -> Harmony)? = MajorTriad.init
-    
+    @Binding private var autoChord: ChordTemplate
     @GestureState private var pressedKey: Note? = nil
     @State private var playingNotes: Set<Note> = []
     
     private var pressedNotes: Set<Note> {
-        pressedKey.map { (autoHarmony?($0).notes).map(Set.init) ?? [$0] } ?? []
+        pressedKey.map { Set(autoChord.from(root: $0).notes) } ?? Set()
     }
     
-    public init<S>(notes: S, synthesizer: Synthesizer, whiteKeySize: CGSize = CGSize(width: 20, height: 100), blackKeySize: CGSize = CGSize(width: 10, height: 80)) where S: Sequence, S.Element == Note {
+    public init<S>(notes: S, autoChord: Binding<ChordTemplate>, synthesizer: Synthesizer, whiteKeySize: CGSize = CGSize(width: 20, height: 100), blackKeySize: CGSize = CGSize(width: 10, height: 80)) where S: Sequence, S.Element == Note {
         self.notes = Array(notes)
+        self._autoChord = autoChord
         self.synthesizer = synthesizer
         self.whiteKeySize = whiteKeySize
         self.blackKeySize = blackKeySize
