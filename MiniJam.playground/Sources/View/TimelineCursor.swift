@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct TimelineMark: Shape {
+public struct TimelineCursor: Shape {
     private let thickness: CGFloat = 1
     
     public func path(in rect: CGRect) -> Path {

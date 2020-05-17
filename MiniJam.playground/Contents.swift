@@ -7,6 +7,7 @@ struct MiniJamView: View {
     private static let synthesizer = try! Synthesizer()
     private static let baseOctave: Int = 4
     
+    @State private var timelineState: TimelineState = .paused
     @State private var tracks: [Track] = []
     @State private var autoChord: ChordTemplate = .none
     @State private var progression: ProgressionTemplate = .none
@@ -18,7 +19,7 @@ struct MiniJamView: View {
             Text("MiniJam")
                 .font(.title)
                 .fontWeight(.light)
-            TimelineView(tracks: $tracks)
+            TimelineView(state: $timelineState, tracks: $tracks)
             PianoView(
                 notes: Note(.c, Self.baseOctave)..<Note(.c, Self.baseOctave + 2),
                 baseOctave: Self.baseOctave,
@@ -38,7 +39,7 @@ struct MiniJamView: View {
             }
                 .frame(width: 500, alignment: .leading)
             Text("""
-                Tap the keys to play!
+                Tap/drag the keys to play!
                 Tip: Pentatonic and blues scales sound great in every key!
                 """)
                 .foregroundColor(.gray)

@@ -9,6 +9,8 @@ public struct PianoView: View {
     private let whiteKeySize: CGSize
     private let blackKeySize: CGSize
     
+    private let timelineState: TimelineState
+    
     @Binding private var chordTemplate: ChordTemplate
     @Binding private var scaleTemplate: ScaleTemplate
     @Binding private var progressionTemplate: ProgressionTemplate
@@ -31,6 +33,7 @@ public struct PianoView: View {
         progressionTemplate: Binding<ProgressionTemplate>,
         key: Binding<NoteClass>,
         synthesizer: Synthesizer,
+        timelineState: TimelineState,
         whiteKeySize: CGSize = CGSize(width: 20, height: 100),
         blackKeySize: CGSize = CGSize(width: 10, height: 80)
     ) where S: Sequence, S.Element == Note {
@@ -41,6 +44,7 @@ public struct PianoView: View {
         self._progressionTemplate = progressionTemplate
         self._key = key
         self.synthesizer = synthesizer
+        self.timelineState = timelineState
         self.whiteKeySize = whiteKeySize
         self.blackKeySize = blackKeySize
     }
@@ -87,7 +91,7 @@ public struct PianoView: View {
                     }
                     .onChanged { _ in
                         DispatchQueue.global().async {
-                            self.play()
+                            self.updatePlaying()
                         }
                     }
                     .onEnded { _ in
@@ -96,8 +100,8 @@ public struct PianoView: View {
             )
     }
     
-    /// Plays the pressed notes to the speaker using the synthesizer.
-    private func play() {
+    /// Plays (and possibly records) the pressed notes to the speaker using the synthesizer.
+    private func updatePlaying() {
         do {
             let notes = pressedNotes
             if notes != playingNotes {

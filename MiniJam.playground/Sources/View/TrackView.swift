@@ -16,7 +16,7 @@ public struct TrackView: View {
         ZStack {
             Rectangle()
                 .fill(Color.green)
-                .frame(height: height)
+                .frame(width: CGFloat(track.duration) * zoom, height: height)
                 .cornerRadius(2)
             // TODO: Render notes
         }

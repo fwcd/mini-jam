@@ -3,7 +3,7 @@ import CoreAudio
 import Foundation
 
 /// A wrapper around the native MIDI player.
-public class Synthesizer {
+public class Synthesizer: NoteSink {
     private let engine: AVAudioEngine
     private var sampler = AVAudioUnitSampler()
     private let midiVelocity: UInt8 = 127
@@ -28,13 +28,5 @@ public class Synthesizer {
     
     public func stop(note: Note) throws {
         sampler.stopNote(note.midiNumber, onChannel: midiChannel)
-    }
-    
-//    private func musicSequenceOf(track: Track) -> MusicSequence {
-//        // TODO
-//    }
-    
-    public func play(track: Track, progress: (Int) -> Void) throws {
-        // TODO
     }
 }
