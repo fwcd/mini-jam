@@ -23,7 +23,7 @@ public struct TrackView: View {
                     .fill(Color.white)
                     .frame(width: CGFloat(note.duration) * self.zoom, height: self.height / CGFloat(NoteClass.allCases.count))
                     .padding(.leading, CGFloat(note.time) * self.zoom)
-                    .padding(.top, CGFloat(note.note.noteClass.rawValue) / CGFloat(NoteClass.allCases.count))
+                    .padding(.top, (CGFloat(note.note.noteClass.rawValue) * self.height) / CGFloat(NoteClass.allCases.count))
             }
         }
     }

@@ -15,7 +15,7 @@ public struct TimelineView: View {
     public var body: some View {
         VStack(alignment: .leading) {
             TimelineToolbarView(state: $state, isRecording: $isRecording)
-            ZStack {
+            ZStack(alignment: .topLeading) {
                 VStack(alignment: .leading) {
                     ForEach(tracks) { track in
                         TrackView(track: track)
@@ -24,7 +24,7 @@ public struct TimelineView: View {
                 TimelineCursor()
                     .fill(Color.red)
                     .offset(x: time)
-                    .frame(width: 15, height: 40)
+                    .frame(width: 15)
             }
         }
     }
