@@ -39,7 +39,7 @@ struct MiniJamView: View {
                 .frame(width: 500, alignment: .leading)
             Text("""
                 Tap the keys to play!
-                Tip: Pentatonic scales sound great in every key!
+                Tip: Pentatonic and blues scales sound great in every key!
                 """)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)

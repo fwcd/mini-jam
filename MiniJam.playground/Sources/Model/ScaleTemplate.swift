@@ -2,6 +2,7 @@ public enum ScaleTemplate: String, CustomStringConvertible, CaseIterable, Hashab
     case chromatic = "Chromatic"
     case diatonic = "Diatonic"
     case pentatonic = "Pentatonic"
+    case blues = "Blues"
     
     public var description: String { rawValue }
     
@@ -10,6 +11,7 @@ public enum ScaleTemplate: String, CustomStringConvertible, CaseIterable, Hashab
         case .chromatic: return ChromaticScale(key: key)
         case .diatonic: return DiatonicScale(key: key)
         case .pentatonic: return PentatonicScale(key: key)
+        case .blues: return BluesScale(key: key)
         }
     }
 }
