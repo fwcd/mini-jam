@@ -27,8 +27,8 @@ public class Recorder: NoteSink, ObservableObject {
             if !newValue {
                 tracks.tracks.append(track)
                 track = Track(notes: [], id: tracks.nextID())
-                startTimestamp = Date()
             }
+            startTimestamp = Date()
         }
     }
     

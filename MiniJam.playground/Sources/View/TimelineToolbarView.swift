@@ -6,10 +6,12 @@ public struct TimelineToolbarView: View {
     
     @Binding private var state: TimelineState
     @Binding private var isRecording: Bool
+    @Binding private var tracks: [Track]
     
-    public init(state: Binding<TimelineState>, isRecording: Binding<Bool>, buttonSize: CGFloat = 20) {
+    public init(state: Binding<TimelineState>, isRecording: Binding<Bool>, tracks: Binding<[Track]>, buttonSize: CGFloat = 20) {
         self._state = state
         self._isRecording = isRecording
+        self._tracks = tracks
         self.buttonSize = buttonSize
     }
     
@@ -42,6 +44,9 @@ public struct TimelineToolbarView: View {
                 } else {
                     Text("Play")
                 }
+            }
+            Button(action: { self.tracks = [] }) {
+                Text("Clear")
             }
         }
     }
