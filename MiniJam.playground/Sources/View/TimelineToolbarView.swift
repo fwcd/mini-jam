@@ -24,6 +24,7 @@ public struct TimelineToolbarView: View {
                     Text("Record")
                 }
             }
+                .disabled(self.isPlaying)
             Button(action: { self.isPlaying = !self.isPlaying }) {
                 if self.isPlaying {
                     Text("Pause")
@@ -31,6 +32,7 @@ public struct TimelineToolbarView: View {
                     Text("Play")
                 }
             }
+                .disabled(self.isRecording)
             Button(action: { self.tracks = [] }) {
                 Text("Clear")
             }

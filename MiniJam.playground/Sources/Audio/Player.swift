@@ -30,6 +30,9 @@ public class Player: ObservableObject {
                         print("Could not synthesize sound while playing: \(error)")
                     }
                 }
+                timelineTimer.start()
+            } else {
+                timelineTimer.stop()
             }
         }
     }
