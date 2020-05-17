@@ -13,7 +13,8 @@ do {
 
 struct MiniJamView: View {
     @State private var tracks: [Track] = []
-    @State private var autoChord: ChordTemplate = .unison
+    @State private var autoChord: ChordTemplate = .none
+    @State private var progression: ProgressionTemplate = .none
 
     var body: some View {
         VStack(spacing: 20) {
@@ -29,9 +30,18 @@ struct MiniJamView: View {
                 blackKeySize: CGSize(width: 20, height: 100)
             )
             Picker(selection: $autoChord, label: Text("Auto-Chord")) {
-                Text("None").tag(ChordTemplate.unison)
-                Text("Major Triad").tag(ChordTemplate.majorTriad)
-                Text("Minor Triad").tag(ChordTemplate.minorTriad)
+                ForEach(0..<ChordTemplate.allCases.count) {
+                    let template = ChordTemplate.allCases[$0]
+                    return Text(template.rawValue).tag(template)
+                }
+            }
+                .pickerStyle(SegmentedPickerStyle())
+                .frame(width: 500)
+            Picker(selection: $progression, label: Text("Progression")) {
+                ForEach(0..<ProgressionTemplate.allCases.count) {
+                    let template = ProgressionTemplate.allCases[$0]
+                    return Text(template.rawValue).tag(template)
+                }
             }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 500)
