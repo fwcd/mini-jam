@@ -35,6 +35,7 @@ public class Recorder: NoteSink, ObservableObject {
                 tracks.tracks.append(recording)
                 track = nil
                 timelineTimer.stop()
+                timelineTimer.time = 0
             }
         }
     }

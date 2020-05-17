@@ -14,16 +14,17 @@ public class TimelineTimer: ObservableObject {
     
     public func stop() {
         cancellables = []
-        time = 0
     }
     
     public func start() {
+        let startTime = time
+        let startTimestamp = Date()
+        
         stop()
         
         let timer = Timer.publish(every: interval, on: .main, in: .common).autoconnect()
-        let startTimestamp = Date()
         cancellables.append(timer.sink { time in
-            self.time = time.timeIntervalSince(startTimestamp)
+            self.time = startTime + time.timeIntervalSince(startTimestamp)
         })
     }
 }
