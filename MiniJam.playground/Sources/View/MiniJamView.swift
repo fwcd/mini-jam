@@ -2,7 +2,8 @@ import SwiftUI
 
 /// The main view of the application. Stores most of the application's state.
 public struct MiniJamView: View {
-    private static let synthesizer = try! Synthesizer()
+    private static let playerSynth = try! Synthesizer()
+    private static let pianoSynth = try! Synthesizer()
     private static let baseOctave: Int = 4
     
     @State private var autoChord: ChordTemplate = .none
@@ -22,7 +23,7 @@ public struct MiniJamView: View {
         self.timelineTimer = timelineTimer
         self.tracks = tracks
         recorder = Recorder(tracks: tracks, timelineTimer: timelineTimer)
-        player = Player(tracks: tracks, timelineTimer: timelineTimer, synthesizer: Self.synthesizer)
+        player = Player(tracks: tracks, timelineTimer: timelineTimer, synthesizer: Self.playerSynth)
     }
 
     public var body: some View {
@@ -46,7 +47,7 @@ public struct MiniJamView: View {
                 progressionTemplate: $progression,
                 key: $key,
                 recorder: recorder,
-                synthesizer: Self.synthesizer,
+                synthesizer: Self.pianoSynth,
                 whiteKeySize: CGSize(width: 40, height: 150),
                 blackKeySize: CGSize(width: 20, height: 100)
             )
