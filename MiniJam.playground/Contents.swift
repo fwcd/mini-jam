@@ -11,7 +11,7 @@ struct MiniJamView: View {
     @State private var autoChord: ChordTemplate = .none
     @State private var progression: ProgressionTemplate = .none
     @State private var scale: ScaleTemplate = .chromatic
-    @State private var key: Note = Note(.c, Self.baseOctave)
+    @State private var key: NoteClass = .c
 
     var body: some View {
         VStack(spacing: 20) {
@@ -21,6 +21,7 @@ struct MiniJamView: View {
             TimelineView(tracks: $tracks)
             PianoView(
                 notes: Note(.c, Self.baseOctave)..<Note(.c, Self.baseOctave + 2),
+                baseOctave: Self.baseOctave,
                 chordTemplate: $autoChord,
                 scaleTemplate: $scale,
                 progressionTemplate: $progression,
@@ -32,9 +33,10 @@ struct MiniJamView: View {
             VStack {
                 EnumPicker(selection: $autoChord, label: Text("Auto-Chord"))
                 EnumPicker(selection: $scale, label: Text("Scale"))
+                EnumPicker(selection: $key, label: Text("Key"))
                 EnumPicker(selection: $progression, label: Text("Progression"))
             }
-                .frame(width: 500)
+                .frame(width: 500, alignment: .leading)
             Text("Tap the keys to play!")
                 .foregroundColor(.gray)
         }

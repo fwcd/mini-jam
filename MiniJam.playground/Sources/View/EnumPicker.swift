@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// A segmented picker that displays all cases from a string-based enum.
-public struct EnumPicker<L, T>: View where L: View, T: CaseIterable & RawRepresentable & Hashable, T.RawValue == String, T.AllCases: RandomAccessCollection, T.AllCases.Index == Int {
+public struct EnumPicker<L, T>: View where L: View, T: CaseIterable & CustomStringConvertible & Hashable, T.AllCases: RandomAccessCollection, T.AllCases.Index == Int {
     @Binding private var selection: T
     private let label: L
     
@@ -13,7 +13,7 @@ public struct EnumPicker<L, T>: View where L: View, T: CaseIterable & RawReprese
     public var body: some View {
         Picker(selection: $selection, label: label) {
             ForEach(0..<T.allCases.count) {
-                Text(T.allCases[$0].rawValue).tag(T.allCases[$0])
+                Text(T.allCases[$0].description).tag(T.allCases[$0])
             }
         }
             .pickerStyle(SegmentedPickerStyle())

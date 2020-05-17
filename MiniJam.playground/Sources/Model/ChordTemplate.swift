@@ -1,7 +1,9 @@
-public enum ChordTemplate: String, CaseIterable, Hashable, Identifiable {
+public enum ChordTemplate: String, CustomStringConvertible, CaseIterable, Hashable, Identifiable {
     case none = "None"
     case majorTriad = "Major Triad"
     case minorTriad = "Minor Triad"
+    
+    public var description: String { rawValue }
     
     public var id: String { rawValue }
     public func from(root: Note) -> Chord {

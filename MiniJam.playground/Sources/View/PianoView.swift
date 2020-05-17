@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct PianoView: View {
     private let notes: [Note]
+    private let baseOctave: Int
     private let synthesizer: Synthesizer
     
     private let whiteKeySize: CGSize
@@ -10,7 +11,7 @@ public struct PianoView: View {
     @Binding private var chordTemplate: ChordTemplate
     @Binding private var scaleTemplate: ScaleTemplate
     @Binding private var progressionTemplate: ProgressionTemplate
-    @Binding private var key: Note
+    @Binding private var key: NoteClass
     @GestureState private var pressedKey: Note? = nil
     @State private var playingNotes: Set<Note> = []
     
@@ -18,20 +19,22 @@ public struct PianoView: View {
         pressedKey.map { Set(chordTemplate.from(root: $0).notes) } ?? Set()
     }
     private var scale: Scale {
-        scaleTemplate.from(key: key)
+        scaleTemplate.from(key: Note(key, baseOctave))
     }
     
     public init<S>(
         notes: S,
+        baseOctave: Int,
         chordTemplate: Binding<ChordTemplate>,
         scaleTemplate: Binding<ScaleTemplate>,
         progressionTemplate: Binding<ProgressionTemplate>,
-        key: Binding<Note>,
+        key: Binding<NoteClass>,
         synthesizer: Synthesizer,
         whiteKeySize: CGSize = CGSize(width: 20, height: 100),
         blackKeySize: CGSize = CGSize(width: 10, height: 80)
     ) where S: Sequence, S.Element == Note {
         self.notes = Array(notes)
+        self.baseOctave = baseOctave
         self._chordTemplate = chordTemplate
         self._scaleTemplate = scaleTemplate
         self._progressionTemplate = progressionTemplate
