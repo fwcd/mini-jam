@@ -4,8 +4,6 @@ import Foundation
 
 /// A wrapper around the native MIDI player.
 public class Synthesizer {
-    // Based on the tutorial https://rollout.io/blog/building-a-midi-music-app-for-ios-in-swift/
-    
     private let engine: AVAudioEngine
     private var sampler = AVAudioUnitSampler()
     private let midiVelocity: UInt8 = 127
