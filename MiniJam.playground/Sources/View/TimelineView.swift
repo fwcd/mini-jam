@@ -10,13 +10,17 @@ public struct TimelineView: View {
     @Binding private var recordingTrack: Track?
     @Binding private var isPlaying: Bool
     @Binding private var isRecording: Bool
+    @Binding private var moverCount: Int
     @Binding private var time: TimeInterval
+    
+    @State private var dragging: Bool = false
     
     public init(
         tracks: Binding<[Track]>,
         recordingTrack: Binding<Track?>,
         isPlaying: Binding<Bool>,
         isRecording: Binding<Bool>,
+        moverCount: Binding<Int>,
         time: Binding<TimeInterval>,
         zoom: CGFloat = 20
     ) {
@@ -24,6 +28,7 @@ public struct TimelineView: View {
         self._recordingTrack = recordingTrack
         self._isPlaying = isPlaying
         self._isRecording = isRecording
+        self._moverCount = moverCount
         self._time = time
         self.zoom = zoom
     }
@@ -61,9 +66,18 @@ public struct TimelineView: View {
             }
             .frame(width: trackWidth, height: trackHeight * 2)
             .gesture(
-                DragGesture(coordinateSpace: .local).onChanged { value in
-                    self.time = Double(value.location.x / self.zoom)
-                }
+                DragGesture(coordinateSpace: .local)
+                    .onChanged { value in
+                        self.time = Double(value.location.x / self.zoom)
+                        if !self.dragging {
+                            self.dragging = true
+                            self.moverCount += 1
+                        }
+                    }
+                    .onEnded { _ in
+                        self.dragging = false
+                        self.moverCount -= 1
+                    }
             )
         }
     }

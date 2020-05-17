@@ -35,6 +35,7 @@ public struct MiniJamView: View {
                 recordingTrack: $recorder.track,
                 isPlaying: $player.isPlaying,
                 isRecording: $recorder.isRecording,
+                moverCount: $timelineTimer.moverCount,
                 time: $timelineTimer.time
             )
             PianoView(

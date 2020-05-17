@@ -26,9 +26,10 @@ public class Player: ObservableObject {
         
         // Subscribe to the timer
         var playingNotes = Set<Note>()
-        cancellable = timelineTimer.$time.sink {
+        cancellable = timelineTimer.$time.combineLatest(timelineTimer.$moverCount).sink { (time, moverCount) in
             do {
-                let currentNotes = Set(self.tracks.notesAt(time: $0))
+                // Only play sounds if the time is moving
+                let currentNotes = moverCount > 0 ? Set(self.tracks.notesAt(time: time)) : Set()
                 if playingNotes != currentNotes {
                     for note in playingNotes {
                         try self.synthesizer.stop(note: note)
