@@ -23,9 +23,14 @@ public struct TrackView: View {
             ForEach(track.notes, id: \.self) { note in
                 Rectangle()
                     .fill(Color.white)
-                    .frame(width: CGFloat(note.duration) * self.zoom, height: self.height / CGFloat(NoteClass.allCases.count))
-                    .padding(.leading, CGFloat(note.time) * self.zoom)
-                    .padding(.top, (CGFloat(note.note.noteClass.rawValue) * self.height) / CGFloat(NoteClass.allCases.count))
+                    .frame(
+                        width: CGFloat(note.duration) * self.zoom,
+                        height: self.height / CGFloat(NoteClass.allCases.count)
+                    )
+                    .offset(
+                        x: CGFloat(note.time) * self.zoom,
+                        y: (CGFloat((NoteClass.allCases.count - 1) - note.note.noteClass.rawValue) * self.height) / CGFloat(NoteClass.allCases.count)
+                    )
             }
         }
     }

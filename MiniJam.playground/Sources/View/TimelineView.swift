@@ -47,8 +47,8 @@ public struct TimelineView: View {
                                 Spacer()
                             }
                         }
-                        // Render existing tracks
-                        ForEach(tracks) { track in
+                        // Render existing tracks in descending order of creation
+                        ForEach(tracks.reversed()) { track in
                             HStack {
                                 TrackView(track: track, isLive: false, zoom: self.zoom, height: self.trackHeight)
                                 Spacer()
@@ -68,7 +68,7 @@ public struct TimelineView: View {
             .gesture(
                 DragGesture(coordinateSpace: .local)
                     .onChanged { value in
-                        self.time = Double(value.location.x / self.zoom)
+                        self.time = max(0, Double(value.location.x / self.zoom))
                         if !self.dragging {
                             self.dragging = true
                             self.moverCount += 1

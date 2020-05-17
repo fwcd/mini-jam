@@ -29,6 +29,7 @@ public class Recorder: NoteSink, ObservableObject {
                 // Starting a new recording, make sure the timeline shows a live timer
                 track = Track(notes: [], id: tracks.nextID())
                 startTimestamp = Date()
+                timelineTimer.time = 0
                 timelineTimer.start()
             } else if let recording = track {
                 // Finished the recording, append the new track to the project
