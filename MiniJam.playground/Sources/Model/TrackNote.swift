@@ -12,4 +12,8 @@ public struct TrackNote: Hashable {
     public init(_ noteClass: NoteClass, _ octave: Int, time: Double, duration: Double) {
         self.init(note: Note(noteClass, octave), time: time, duration: duration)
     }
+    
+    public func contains(time: Double) -> Bool {
+        time >= self.time && time < (self.time + duration)
+    }
 }

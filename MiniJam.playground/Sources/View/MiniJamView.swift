@@ -9,6 +9,7 @@ public struct MiniJamView: View {
     @State private var progression: ProgressionTemplate = .none
     @State private var scale: ScaleTemplate = .chromatic
     @State private var key: NoteClass = .c
+    @State private var time: CGFloat = 0
     
     @ObservedObject private var tracks: Tracks = Tracks()
     @ObservedObject private var recorder: Recorder = Recorder(tracks: Tracks()) // Dummy
@@ -25,7 +26,8 @@ public struct MiniJamView: View {
             TimelineView(
                 state: $timelineState,
                 tracks: $tracks.tracks,
-                isRecording: $recorder.isRecording
+                isRecording: $recorder.isRecording,
+                time: $time
             )
             PianoView(
                 notes: Note(.c, Self.baseOctave)..<Note(.c, Self.baseOctave + 2),
@@ -43,7 +45,8 @@ public struct MiniJamView: View {
                 EnumPicker(selection: $autoChord, label: Text("Auto-Chord"))
                 EnumPicker(selection: $scale, label: Text("Scale"))
                 EnumPicker(selection: $key, label: Text("Key"))
-                EnumPicker(selection: $progression, label: Text("Progression"))
+                // WIP:
+                // EnumPicker(selection: $progression, label: Text("Progression"))
             }
                 .frame(width: 500, alignment: .leading)
             Text("""

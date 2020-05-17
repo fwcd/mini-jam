@@ -1,18 +1,20 @@
 import SwiftUI
 
 public struct TimelineView: View {
+    private let zoom: CGFloat
     private let trackWidth: CGFloat = 500
     private let trackHeight: CGFloat = 50
     
     @Binding private var state: TimelineState
     @Binding private var tracks: [Track]
     @Binding private var isRecording: Bool
-    @State private var time: CGFloat = 0
+    @Binding private var time: CGFloat
     
-    public init(state: Binding<TimelineState>, tracks: Binding<[Track]>, isRecording: Binding<Bool>) {
+    public init(state: Binding<TimelineState>, tracks: Binding<[Track]>, isRecording: Binding<Bool>, time: Binding<CGFloat>) {
         self._state = state
         self._tracks = tracks
         self._isRecording = isRecording
+        self._time = time
     }
     
     public var body: some View {
@@ -23,7 +25,7 @@ public struct TimelineView: View {
                     VStack(alignment: .leading) {
                         ForEach(tracks) { track in
                             HStack {
-                                TrackView(track: track, height: self.trackHeight)
+                                TrackView(track: track, zoom: self.zoom, height: self.trackHeight)
                                 Spacer()
                             }
                         }
@@ -31,7 +33,7 @@ public struct TimelineView: View {
                         .frame(width: trackWidth)
                     TimelineCursor()
                         .fill(Color.red)
-                        .offset(x: time)
+                        .offset(x: time * zoom)
                         .frame(width: 15)
                 }
             }
