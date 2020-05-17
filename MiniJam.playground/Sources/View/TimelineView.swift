@@ -30,7 +30,7 @@ public struct TimelineView: View {
     
     public var body: some View {
         VStack(alignment: .leading) {
-            TimelineToolbarView(isPlaying: $isPlaying, isRecording: $isRecording, tracks: $tracks)
+            TimelineToolbarView(time: $time, isPlaying: $isPlaying, isRecording: $isRecording, tracks: $tracks)
             ScrollView {
                 ZStack(alignment: .topLeading) {
                     VStack(alignment: .leading) {
