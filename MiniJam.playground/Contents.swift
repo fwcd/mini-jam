@@ -25,7 +25,7 @@ struct MiniJamView: View {
                     .foregroundColor(.black)
                 TimelineView(tracks: $tracks)
                 PianoView(
-                    notes: Note(.c, octave: 4)...Note(.c, octave: 5),
+                    notes: Note(.c, octave: 4)..<Note(.c, octave: 6),
                     synthesizer: synthesizer,
                     whiteKeySize: CGSize(width: 40, height: 150),
                     blackKeySize: CGSize(width: 20, height: 100)

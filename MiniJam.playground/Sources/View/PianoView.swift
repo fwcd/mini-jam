@@ -39,7 +39,7 @@ public struct PianoView: View {
             PianoKeyView(
                 note: $0.0,
                 size: $0.1.size,
-                pressed: pressedNotes.contains($0.0)
+                pressed: playingNotes.contains($0.0)
             )
                 .padding(.leading, $0.1.minX)
                 .zIndex($0.0.hasAccidental ? 1 : 0)
@@ -86,6 +86,7 @@ public struct PianoView: View {
             for note in playingNotes {
                 try synthesizer.stop(note: note)
             }
+            playingNotes = []
         } catch {
             print("Could not stpo notes using synthesizer: \(error)")
         }
