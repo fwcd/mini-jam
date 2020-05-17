@@ -57,13 +57,13 @@ public struct PianoView: View {
     }
     
     public var body: some View {
-        let scaleNotes = Set(scale.notes)
+        let scaleNoteClasses = Set(scale.notes.map { $0.noteClass })
         let keys = keyBounds.map {
             PianoKeyView(
                 note: $0.0,
                 size: $0.1.size,
                 pressed: playingNotes.contains($0.0),
-                enabled: scaleNotes.contains($0.0)
+                enabled: scaleNoteClasses.contains($0.0.noteClass)
             )
                 .padding(.leading, $0.1.minX)
                 .zIndex($0.0.hasAccidental ? 1 : 0)
@@ -81,7 +81,7 @@ public struct PianoView: View {
                             .filter { $0.1.contains(value.location) }
                             .max(by: compareAscending { $0.0.hasAccidental ? 1 : 0 })?.0
                         // Only update the pressed state if we are not on a key that does not belong to the current scale
-                        if newPressed.map({ self.scale.notes.contains($0) }) ?? true {
+                        if newPressed.map({ self.scale.notes.map { $0.noteClass }.contains($0.noteClass) }) ?? true {
                             state = newPressed
                         }
                     }
