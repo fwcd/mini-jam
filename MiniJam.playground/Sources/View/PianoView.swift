@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// A customizable piano keyboard with the ability to automatically play chords and highlight scales over a given note.
 public struct PianoView: View {
     private let notes: [Note]
     private let baseOctave: Int
@@ -56,11 +57,13 @@ public struct PianoView: View {
     }
     
     public var body: some View {
+        let scaleNotes = Set(scale.notes)
         let keys = keyBounds.map {
             PianoKeyView(
                 note: $0.0,
                 size: $0.1.size,
-                pressed: playingNotes.contains($0.0)
+                pressed: playingNotes.contains($0.0),
+                enabled: scaleNotes.contains($0.0)
             )
                 .padding(.leading, $0.1.minX)
                 .zIndex($0.0.hasAccidental ? 1 : 0)
@@ -74,7 +77,13 @@ public struct PianoView: View {
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                     .updating($pressedKey) { (value, state, _) in
-                        state = self.keyBounds.filter { $0.1.contains(value.location) }.max(by: compareAscending { $0.0.hasAccidental ? 1 : 0 })?.0
+                        let newPressed = self.keyBounds
+                            .filter { $0.1.contains(value.location) }
+                            .max(by: compareAscending { $0.0.hasAccidental ? 1 : 0 })?.0
+                        // Only update the pressed state if we are not on a key that does not belong to the current scale
+                        if newPressed.map({ self.scale.notes.contains($0) }) ?? true {
+                            state = newPressed
+                        }
                     }
                     .onChanged { _ in
                         DispatchQueue.global().async {
@@ -87,6 +96,7 @@ public struct PianoView: View {
             )
     }
     
+    /// Plays the pressed notes to the speaker using the synthesizer.
     private func play() {
         do {
             let notes = pressedNotes
@@ -102,6 +112,7 @@ public struct PianoView: View {
         }
     }
     
+    /// Stops playing the pressed notes to the speaker using the synthesizer.
     private func stop() {
         do {
             for note in playingNotes {
