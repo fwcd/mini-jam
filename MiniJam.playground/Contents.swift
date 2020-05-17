@@ -37,8 +37,12 @@ struct MiniJamView: View {
                 EnumPicker(selection: $progression, label: Text("Progression"))
             }
                 .frame(width: 500, alignment: .leading)
-            Text("Tap the keys to play!")
+            Text("""
+                Tap the keys to play!
+                Tip: Pentatonic scales sound great in every key!
+                """)
                 .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
         }
             .frame(width: 800, height: 600)
     }
