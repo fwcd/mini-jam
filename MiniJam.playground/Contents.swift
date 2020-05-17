@@ -19,9 +19,10 @@ struct MiniJamView: View {
         VStack(spacing: 20) {
             Text("MiniJam")
                 .font(.title)
+                .fontWeight(.light)
             TimelineView(tracks: $tracks)
             PianoView(
-                notes: Note(.c, octave: 4)..<Note(.c, octave: 6),
+                notes: Note(.c, 4)..<Note(.c, 6),
                 autoChord: $autoChord,
                 synthesizer: synthesizer,
                 whiteKeySize: CGSize(width: 40, height: 150),

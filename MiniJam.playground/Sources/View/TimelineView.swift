@@ -10,6 +10,11 @@ public struct TimelineView: View {
     
     public var body: some View {
         ZStack {
+            VStack(alignment: .leading) {
+                ForEach(0..<tracks.count) {
+                    TrackView(track: self.$tracks[$0])
+                }
+            }
             TimelineMark()
                 .fill(Color.red)
                 .offset(x: time)

@@ -7,14 +7,14 @@ public struct Note: CustomStringConvertible, Hashable, Identifiable, Comparable,
     public var numValue: Int { (octave * NoteClass.allCases.count) + noteClass.rawValue }
     public var hasAccidental: Bool { noteClass.hasAccidental }
     public var id: Int { numValue }
-    public var midiNumber: UInt8 { UInt8(127 - Note(.g, octave: 9).numValue + numValue) }
+    public var midiNumber: UInt8 { UInt8(127 - Note(.g, 9).numValue + numValue) }
     
     public init(numValue: Int) {
         noteClass = NoteClass(rawValue: numValue % NoteClass.allCases.count)!
         octave = numValue / NoteClass.allCases.count
     }
     
-    public init(_ noteClass: NoteClass, octave: Int = 0) {
+    public init(_ noteClass: NoteClass, _ octave: Int = 0) {
         self.noteClass = noteClass
         self.octave = octave
     }
