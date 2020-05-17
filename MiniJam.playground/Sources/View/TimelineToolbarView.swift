@@ -4,12 +4,12 @@ import SwiftUI
 public struct TimelineToolbarView: View {
     private let buttonSize: CGFloat
     
-    @Binding private var state: TimelineState
+    @Binding private var isPlaying: Bool
     @Binding private var isRecording: Bool
     @Binding private var tracks: [Track]
     
-    public init(state: Binding<TimelineState>, isRecording: Binding<Bool>, tracks: Binding<[Track]>, buttonSize: CGFloat = 20) {
-        self._state = state
+    public init(isPlaying: Binding<Bool>, isRecording: Binding<Bool>, tracks: Binding<[Track]>, buttonSize: CGFloat = 20) {
+        self._isPlaying = isPlaying
         self._isRecording = isRecording
         self._tracks = tracks
         self.buttonSize = buttonSize
@@ -17,29 +17,15 @@ public struct TimelineToolbarView: View {
     
     public var body: some View {
         HStack {
-            Button(action: {
-                switch self.state {
-                case .recording:
-                    self.state = .paused
-                    self.isRecording = false
-                default:
-                    self.state = .recording
-                    self.isRecording = true
-                }
-            }) {
-                if self.state == .recording {
+            Button(action: { self.isRecording = !self.isRecording }) {
+                if self.isRecording {
                     Text("Stop Recording")
                 } else {
                     Text("Record")
                 }
             }
-            Button(action: {
-                switch self.state {
-                case .playing: self.state = .paused
-                default: self.state = .playing
-                }
-            }) {
-                if self.state == .playing {
+            Button(action: { self.isPlaying = !self.isPlaying }) {
+                if self.isPlaying {
                     Text("Pause")
                 } else {
                     Text("Play")

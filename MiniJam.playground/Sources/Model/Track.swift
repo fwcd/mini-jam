@@ -2,6 +2,8 @@ import Foundation
 
 /// A MIDI-like track containing the recorded instrument.
 public struct Track: Identifiable {
+    // TODO: Consider a more efficient data structure for the notes, e.g. an interval tree
+    
     public var notes: [TrackNote]
     public var id: Int
     

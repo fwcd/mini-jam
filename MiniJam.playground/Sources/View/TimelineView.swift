@@ -6,23 +6,23 @@ public struct TimelineView: View {
     private let trackWidth: CGFloat = 500
     private let trackHeight: CGFloat = 50
     
-    @Binding private var state: TimelineState
     @Binding private var tracks: [Track]
     @Binding private var recordingTrack: Track?
+    @Binding private var isPlaying: Bool
     @Binding private var isRecording: Bool
     @Binding private var time: TimeInterval
     
     public init(
-        state: Binding<TimelineState>,
         tracks: Binding<[Track]>,
         recordingTrack: Binding<Track?>,
+        isPlaying: Binding<Bool>,
         isRecording: Binding<Bool>,
         time: Binding<TimeInterval>,
         zoom: CGFloat = 20
     ) {
-        self._state = state
         self._tracks = tracks
         self._recordingTrack = recordingTrack
+        self._isPlaying = isPlaying
         self._isRecording = isRecording
         self._time = time
         self.zoom = zoom
@@ -30,10 +30,11 @@ public struct TimelineView: View {
     
     public var body: some View {
         VStack(alignment: .leading) {
-            TimelineToolbarView(state: $state, isRecording: $isRecording, tracks: $tracks)
+            TimelineToolbarView(isPlaying: $isPlaying, isRecording: $isRecording, tracks: $tracks)
             ScrollView {
                 ZStack(alignment: .topLeading) {
                     VStack(alignment: .leading) {
+                        // Render currently recording track
                         if recordingTrack != nil {
                             // Workaround for not being able to use if-let in view builders
                             HStack {
@@ -41,6 +42,7 @@ public struct TimelineView: View {
                                 Spacer()
                             }
                         }
+                        // Render existing tracks
                         ForEach(tracks) { track in
                             HStack {
                                 TrackView(track: track, isLive: false, zoom: self.zoom, height: self.trackHeight)

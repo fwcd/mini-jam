@@ -5,18 +5,24 @@ public struct MiniJamView: View {
     private static let synthesizer = try! Synthesizer()
     private static let baseOctave: Int = 4
     
-    @State private var timelineState: TimelineState = .paused
     @State private var autoChord: ChordTemplate = .none
     @State private var progression: ProgressionTemplate = .none
     @State private var scale: ScaleTemplate = .chromatic
     @State private var key: NoteClass = .c
     
-    @ObservedObject private var timelineTimer: TimelineTimer = TimelineTimer()
-    @ObservedObject private var tracks: Tracks = Tracks()
-    @ObservedObject private var recorder: Recorder = Recorder(tracks: Tracks(), timelineTimer: TimelineTimer()) // Dummy
+    @ObservedObject private var timelineTimer: TimelineTimer
+    @ObservedObject private var tracks: Tracks
+    @ObservedObject private var player: Player
+    @ObservedObject private var recorder: Recorder
     
     public init() {
+        let timelineTimer = TimelineTimer()
+        let tracks = Tracks()
+        
+        self.timelineTimer = timelineTimer
+        self.tracks = tracks
         recorder = Recorder(tracks: tracks, timelineTimer: timelineTimer)
+        player = Player(tracks: tracks, timelineTimer: timelineTimer, synthesizer: Self.synthesizer)
     }
 
     public var body: some View {
@@ -25,9 +31,9 @@ public struct MiniJamView: View {
                 .font(.title)
                 .fontWeight(.light)
             TimelineView(
-                state: $timelineState,
                 tracks: $tracks.tracks,
                 recordingTrack: $recorder.track,
+                isPlaying: $player.isPlaying,
                 isRecording: $recorder.isRecording,
                 time: $timelineTimer.time
             )
