@@ -16,20 +16,26 @@ private struct PressedNote: Hashable {
 
 /// A sink that records notes to a track and immediately begins tracking the time.
 public class Recorder: NoteSink, ObservableObject {
+    private let tracks: Tracks
+    
     private var startTimestamp: Date = Date()
     private var pressed: Set<PressedNote> = []
     
-    @Published public var track: Track = Track(notes: [])
+    @Published public var track: Track = Track(notes: [], id: 0) // Dummy
     @Published public var isRecording: Bool = false {
         willSet {
-            if newValue {
-                track = Track(notes: [])
+            if !newValue {
+                tracks.tracks.append(track)
+                track = Track(notes: [], id: tracks.nextID())
                 startTimestamp = Date()
             }
         }
     }
     
-    public init() {}
+    public init(tracks: Tracks) {
+        self.tracks = tracks
+        track = Track(notes: [], id: tracks.nextID())
+    }
     
     public func start(note: Note) {
         if isRecording {

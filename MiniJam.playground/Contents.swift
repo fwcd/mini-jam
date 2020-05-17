@@ -8,21 +8,16 @@ struct MiniJamView: View {
     private static let baseOctave: Int = 4
     
     @State private var timelineState: TimelineState = .paused
-    @ObservedObject private var recorder: Recorder = Recorder()
-    @State private var tracks: [Track] = []
     @State private var autoChord: ChordTemplate = .none
     @State private var progression: ProgressionTemplate = .none
     @State private var scale: ScaleTemplate = .chromatic
     @State private var key: NoteClass = .c
     
+    @ObservedObject private var tracks: Tracks = Tracks()
+    @ObservedObject private var recorder: Recorder = Recorder(tracks: Tracks()) // Dummy
+    
     init() {
-        let recorder = self.recorder
-        let tracks = $tracks
-        recorder.objectWillChange.sink {
-            if !recorder.isRecording {
-                tracks.wrappedValue.append(recorder.track)
-            }
-        }
+        recorder = Recorder(tracks: tracks)
     }
 
     var body: some View {
@@ -32,7 +27,7 @@ struct MiniJamView: View {
                 .fontWeight(.light)
             TimelineView(
                 state: $timelineState,
-                tracks: $tracks,
+                tracks: $tracks.tracks,
                 isRecording: $recorder.isRecording
             )
             PianoView(

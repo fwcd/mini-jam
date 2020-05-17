@@ -17,8 +17,8 @@ public struct TimelineView: View {
             TimelineToolbarView(state: $state, isRecording: $isRecording)
             ZStack {
                 VStack(alignment: .leading) {
-                    ForEach(0..<tracks.count) {
-                        TrackView(track: self.$tracks[$0])
+                    ForEach(tracks) { track in
+                        TrackView(track: track)
                     }
                 }
                 TimelineCursor()
