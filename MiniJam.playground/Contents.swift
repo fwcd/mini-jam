@@ -3,19 +3,17 @@
 import SwiftUI
 import PlaygroundSupport
 
-let samples = Bundle.main.urls(forResourcesWithExtension: "mp3", subdirectory: "Samples")!
-
 let synthesizer: Synthesizer
-    
+
 do {
-    synthesizer = try Synthesizer(sampleURLs: samples)
+    synthesizer = try Synthesizer()
 } catch {
     fatalError("Could not create synthesizer: \(error)")
 }
 
 struct MiniJamView: View {
     @State private var tracks: [Track] = []
-    
+
     var body: some View {
         ZStack {
             Rectangle()
@@ -27,7 +25,7 @@ struct MiniJamView: View {
                     .foregroundColor(.black)
                 TimelineView(tracks: $tracks)
                 PianoView(
-                    notes: Note(.c, octave: 3)...Note(.c, octave: 4),
+                    notes: Note(.c, octave: 4)...Note(.c, octave: 5),
                     synthesizer: synthesizer,
                     whiteKeySize: CGSize(width: 40, height: 150),
                     blackKeySize: CGSize(width: 20, height: 100)
