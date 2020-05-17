@@ -49,10 +49,12 @@ public struct TimelineView: View {
                         }
                     }
                         .frame(width: trackWidth)
-                    TimelineCursor()
-                        .fill(Color.red)
-                        .offset(x: CGFloat(time) * zoom)
-                        .frame(width: 15)
+                    GeometryReader { geometry in
+                        TimelineCursor()
+                            .fill(Color.red)
+                            .offset(x: (CGFloat(self.time) * self.zoom) - (geometry.size.width / 2))
+                            .frame(width: 15)
+                    }
                 }
             }
             .frame(width: trackWidth, height: trackHeight * 2)
