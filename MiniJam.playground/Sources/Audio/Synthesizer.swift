@@ -11,8 +11,6 @@ public class Synthesizer {
     private let midiVelocity: UInt8 = 127
     private let midiChannel: MIDIChannelNumber = 0
     
-    private var playingMidiNote: UInt8? = nil
-    
     public init() throws {
         engine = AVAudioEngine()
         
@@ -24,23 +22,14 @@ public class Synthesizer {
         
     }
     
-    public func start(note: Note, ignorePlaying: Bool = false) throws {
+    public func start(note: Note) throws {
         let midiNote = note.midiNumber
-        if ignorePlaying || midiNote != playingMidiNote {
-            if !ignorePlaying {
-                try stop()
-            }
-            print("Playing \(note)")
-            sampler.startNote(midiNote, withVelocity: midiVelocity, onChannel: midiChannel)
-            playingMidiNote = midiNote
-        }
+        print("Playing \(note)")
+        sampler.startNote(midiNote, withVelocity: midiVelocity, onChannel: midiChannel)
     }
     
-    public func stop(note: Note? = nil) throws {
-        if let midiNote = note?.midiNumber ?? playingMidiNote {
-            sampler.stopNote(midiNote, onChannel: midiChannel)
-            playingMidiNote = nil
-        }
+    public func stop(note: Note) throws {
+        sampler.stopNote(note.midiNumber, onChannel: midiChannel)
     }
     
 //    private func musicSequenceOf(track: Track) -> MusicSequence {

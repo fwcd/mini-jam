@@ -7,7 +7,14 @@ public struct PianoView: View {
     private let whiteKeySize: CGSize
     private let blackKeySize: CGSize
     
+    private let autoHarmony: ((Note) -> Harmony)? = MajorTriad.init
+    
     @GestureState private var pressedKey: Note? = nil
+    @State private var playingNotes: Set<Note> = []
+    
+    private var pressedNotes: Set<Note> {
+        pressedKey.map { (autoHarmony?($0).notes).map(Set.init) ?? [$0] } ?? []
+    }
     
     public init<S>(notes: S, synthesizer: Synthesizer, whiteKeySize: CGSize = CGSize(width: 20, height: 100), blackKeySize: CGSize = CGSize(width: 10, height: 80)) where S: Sequence, S.Element == Note {
         self.notes = Array(notes)
@@ -32,7 +39,7 @@ public struct PianoView: View {
             PianoKeyView(
                 note: $0.0,
                 size: $0.1.size,
-                pressed: pressedKey == $0.0
+                pressed: pressedNotes.contains($0.0)
             )
                 .padding(.leading, $0.1.minX)
                 .zIndex($0.0.hasAccidental ? 1 : 0)
@@ -50,9 +57,7 @@ public struct PianoView: View {
                     }
                     .onChanged { _ in
                         DispatchQueue.global().async {
-                            if let note = self.pressedKey {
-                                self.play(note: note)
-                            }
+                            self.play()
                         }
                     }
                     .onEnded { _ in
@@ -61,19 +66,28 @@ public struct PianoView: View {
             )
     }
     
-    private func play(note: Note) {
+    private func play() {
         do {
-            try synthesizer.start(note: note)
+            let notes = pressedNotes
+            if notes != playingNotes {
+                stop()
+                for note in notes {
+                    try synthesizer.start(note: note)
+                }
+                playingNotes = notes
+            }
         } catch {
-            print("Could not play note \(note) using synthesizer: \(error)")
+            print("Could not play notes using synthesizer: \(error)")
         }
     }
     
     private func stop() {
         do {
-            try synthesizer.stop()
+            for note in playingNotes {
+                try synthesizer.stop(note: note)
+            }
         } catch {
-            print("Could not stpo note using synthesizer: \(error)")
+            print("Could not stpo notes using synthesizer: \(error)")
         }
     }
 }
