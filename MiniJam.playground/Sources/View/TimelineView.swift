@@ -60,6 +60,11 @@ public struct TimelineView: View {
                 }
             }
             .frame(width: trackWidth, height: trackHeight * 2)
+            .gesture(
+                DragGesture(coordinateSpace: .local).onChanged { value in
+                    self.time = Double(value.location.x / self.zoom)
+                }
+            )
         }
     }
 }
