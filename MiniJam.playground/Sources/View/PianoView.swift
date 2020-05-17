@@ -9,14 +9,14 @@ public struct PianoView: View {
     private let whiteKeySize: CGSize
     private let blackKeySize: CGSize
     
-    private let timelineState: TimelineState
-    
     @Binding private var chordTemplate: ChordTemplate
     @Binding private var scaleTemplate: ScaleTemplate
     @Binding private var progressionTemplate: ProgressionTemplate
     @Binding private var key: NoteClass
+    
     @GestureState private var pressedKey: Note? = nil
     @State private var playingNotes: Set<Note> = []
+    private let recorder: Recorder
     
     private var pressedNotes: Set<Note> {
         pressedKey.map { Set(chordTemplate.from(root: $0).notes) } ?? Set()
@@ -32,8 +32,8 @@ public struct PianoView: View {
         scaleTemplate: Binding<ScaleTemplate>,
         progressionTemplate: Binding<ProgressionTemplate>,
         key: Binding<NoteClass>,
+        recorder: Recorder,
         synthesizer: Synthesizer,
-        timelineState: TimelineState,
         whiteKeySize: CGSize = CGSize(width: 20, height: 100),
         blackKeySize: CGSize = CGSize(width: 10, height: 80)
     ) where S: Sequence, S.Element == Note {
@@ -43,8 +43,8 @@ public struct PianoView: View {
         self._scaleTemplate = scaleTemplate
         self._progressionTemplate = progressionTemplate
         self._key = key
+        self.recorder = recorder
         self.synthesizer = synthesizer
-        self.timelineState = timelineState
         self.whiteKeySize = whiteKeySize
         self.blackKeySize = blackKeySize
     }
@@ -108,6 +108,9 @@ public struct PianoView: View {
                 stop()
                 for note in notes {
                     try synthesizer.start(note: note)
+                    if recorder.isRecording {
+                        recorder.start(note: note)
+                    }
                 }
                 playingNotes = notes
             }
@@ -121,6 +124,9 @@ public struct PianoView: View {
         do {
             for note in playingNotes {
                 try synthesizer.stop(note: note)
+                if recorder.isRecording {
+                    recorder.stop(note: note)
+                }
             }
             playingNotes = []
         } catch {

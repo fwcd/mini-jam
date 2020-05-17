@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 private struct PressedNote: Hashable {
     let note: Note
@@ -14,23 +15,32 @@ private struct PressedNote: Hashable {
 }
 
 /// A sink that records notes to a track and immediately begins tracking the time.
-public struct Recorder: NoteSink {
-    public private(set) var track: Track
+public class Recorder: NoteSink, ObservableObject {
     private var startTimestamp: Date = Date()
     private var pressed: Set<PressedNote> = []
     
-    public init(track: Track) {
-        self.track = track
+    @Published public var track: Track = Track(notes: [])
+    @Published public var isRecording: Bool = false {
+        willSet {
+            if newValue {
+                track = Track(notes: [])
+                startTimestamp = Date()
+            }
+        }
     }
     
+    public init() {}
+    
     public func start(note: Note) {
-        pressed.insert(PressedNote(note: note))
+        if isRecording {
+            pressed.insert(PressedNote(note: note))
+        }
     }
     
     public func stop(note: Note) {
-        if let removed = pressed.remove(PressedNote(note: note)) {
+        if isRecording, let removed = pressed.remove(PressedNote(note: note)) {
             let duration = -removed.timestamp.timeIntervalSinceNow
-            let time = removed.timeIntervalSince(startTimestamp)
+            let time = removed.timestamp.timeIntervalSince(startTimestamp)
             track.notes.append(TrackNote(note: note, time: time, duration: duration))
         }
     }
