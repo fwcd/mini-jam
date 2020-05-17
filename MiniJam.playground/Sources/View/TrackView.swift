@@ -6,19 +6,25 @@ public struct TrackView: View {
     private let zoom: CGFloat
     private let height: CGFloat
     
-    public init(track: Track, zoom: CGFloat = 1, height: CGFloat = 50) {
+    public init(track: Track, zoom: CGFloat = 20, height: CGFloat = 50) {
         self.track = track
         self.zoom = zoom
         self.height = height
     }
     
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             Rectangle()
                 .fill(Color.green)
                 .frame(width: CGFloat(track.duration) * zoom, height: height)
                 .cornerRadius(2)
-            // TODO: Render notes
+            ForEach(track.notes, id: \.self) { note in
+                Rectangle()
+                    .fill(Color.white)
+                    .frame(width: CGFloat(note.duration) * self.zoom, height: self.height / CGFloat(NoteClass.allCases.count))
+                    .padding(.leading, CGFloat(note.time) * self.zoom)
+                    .padding(.top, CGFloat(note.note.noteClass.rawValue) / CGFloat(NoteClass.allCases.count))
+            }
         }
     }
 }
