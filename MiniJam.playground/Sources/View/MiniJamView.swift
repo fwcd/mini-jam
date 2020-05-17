@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// The main view of the application. Stores most of the application's state.
 public struct MiniJamView: View {
     private static let synthesizer = try! Synthesizer()
     private static let baseOctave: Int = 4
@@ -9,13 +10,13 @@ public struct MiniJamView: View {
     @State private var progression: ProgressionTemplate = .none
     @State private var scale: ScaleTemplate = .chromatic
     @State private var key: NoteClass = .c
-    @State private var time: CGFloat = 0
     
+    @ObservedObject private var timelineTimer: TimelineTimer = TimelineTimer()
     @ObservedObject private var tracks: Tracks = Tracks()
-    @ObservedObject private var recorder: Recorder = Recorder(tracks: Tracks()) // Dummy
+    @ObservedObject private var recorder: Recorder = Recorder(tracks: Tracks(), timelineTimer: TimelineTimer()) // Dummy
     
     public init() {
-        recorder = Recorder(tracks: tracks)
+        recorder = Recorder(tracks: tracks, timelineTimer: timelineTimer)
     }
 
     public var body: some View {
@@ -27,7 +28,7 @@ public struct MiniJamView: View {
                 state: $timelineState,
                 tracks: $tracks.tracks,
                 isRecording: $recorder.isRecording,
-                time: $time
+                time: $timelineTimer.time
             )
             PianoView(
                 notes: Note(.c, Self.baseOctave)..<Note(.c, Self.baseOctave + 2),

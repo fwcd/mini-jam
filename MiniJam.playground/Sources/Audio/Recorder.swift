@@ -17,6 +17,7 @@ private struct PressedNote: Hashable {
 /// A sink that records notes to a track and immediately begins tracking the time.
 public class Recorder: NoteSink, ObservableObject {
     private let tracks: Tracks
+    private let timelineTimer: TimelineTimer
     
     private var startTimestamp: Date = Date()
     private var pressed: Set<PressedNote> = []
@@ -24,16 +25,23 @@ public class Recorder: NoteSink, ObservableObject {
     @Published public var track: Track = Track(notes: [], id: 0) // Dummy
     @Published public var isRecording: Bool = false {
         willSet {
-            if !newValue {
+            if newValue {
+                // Starting a new recording, make sure the timeline shows a live timer
+                startTimestamp = Date()
+                timelineTimer.start()
+            } else {
+                // Finished the recording, append the new track to the project
                 tracks.tracks.append(track)
                 track = Track(notes: [], id: tracks.nextID())
+                timelineTimer.stop()
             }
-            startTimestamp = Date()
         }
     }
     
-    public init(tracks: Tracks) {
+    public init(tracks: Tracks, timelineTimer: TimelineTimer) {
         self.tracks = tracks
+        self.timelineTimer = timelineTimer
+        
         track = Track(notes: [], id: tracks.nextID())
     }
     
