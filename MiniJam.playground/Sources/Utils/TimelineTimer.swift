@@ -8,12 +8,13 @@ public class TimelineTimer: ObservableObject {
     
     @Published public var time: TimeInterval = 0
     
-    public init(interval: TimeInterval = 0.01) {
+    public init(interval: TimeInterval = 0.05) {
         self.interval = interval
     }
     
     public func stop() {
         cancellables = []
+        time = 0
     }
     
     public func start() {
