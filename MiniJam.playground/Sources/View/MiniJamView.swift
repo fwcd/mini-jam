@@ -27,6 +27,7 @@ public struct MiniJamView: View {
             TimelineView(
                 state: $timelineState,
                 tracks: $tracks.tracks,
+                recordingTrack: $recorder.track,
                 isRecording: $recorder.isRecording,
                 time: $timelineTimer.time
             )

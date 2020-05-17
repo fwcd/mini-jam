@@ -22,17 +22,18 @@ public class Recorder: NoteSink, ObservableObject {
     private var startTimestamp: Date = Date()
     private var pressed: Set<PressedNote> = []
     
-    @Published public var track: Track = Track(notes: [], id: 0) // Dummy
+    @Published public var track: Track? = nil
     @Published public var isRecording: Bool = false {
         willSet {
             if newValue {
                 // Starting a new recording, make sure the timeline shows a live timer
+                track = Track(notes: [], id: tracks.nextID())
                 startTimestamp = Date()
                 timelineTimer.start()
-            } else {
+            } else if let recording = track {
                 // Finished the recording, append the new track to the project
-                tracks.tracks.append(track)
-                track = Track(notes: [], id: tracks.nextID())
+                tracks.tracks.append(recording)
+                track = nil
                 timelineTimer.stop()
             }
         }
@@ -41,8 +42,6 @@ public class Recorder: NoteSink, ObservableObject {
     public init(tracks: Tracks, timelineTimer: TimelineTimer) {
         self.tracks = tracks
         self.timelineTimer = timelineTimer
-        
-        track = Track(notes: [], id: tracks.nextID())
     }
     
     public func start(note: Note) {
@@ -55,7 +54,7 @@ public class Recorder: NoteSink, ObservableObject {
         if isRecording, let removed = pressed.remove(PressedNote(note: note)) {
             let duration = -removed.timestamp.timeIntervalSinceNow
             let time = removed.timestamp.timeIntervalSince(startTimestamp)
-            track.notes.append(TrackNote(note: note, time: time, duration: duration))
+            track!.notes.append(TrackNote(note: note, time: time, duration: duration))
         }
     }
 }

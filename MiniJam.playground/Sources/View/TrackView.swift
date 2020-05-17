@@ -2,12 +2,14 @@ import SwiftUI
 
 public struct TrackView: View {
     private let track: Track
+    private let isLive: Bool
     
     private let zoom: CGFloat
     private let height: CGFloat
     
-    public init(track: Track, zoom: CGFloat = 20, height: CGFloat = 50) {
+    public init(track: Track, isLive: Bool = false, zoom: CGFloat = 20, height: CGFloat = 50) {
         self.track = track
+        self.isLive = isLive
         self.zoom = zoom
         self.height = height
     }
@@ -15,7 +17,7 @@ public struct TrackView: View {
     public var body: some View {
         ZStack(alignment: .topLeading) {
             Rectangle()
-                .fill(Color.green)
+                .fill(isLive ? Color.red : Color.green)
                 .frame(width: CGFloat(track.duration) * zoom, height: height)
                 .cornerRadius(2)
             ForEach(track.notes, id: \.self) { note in

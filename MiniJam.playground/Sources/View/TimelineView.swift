@@ -8,12 +8,21 @@ public struct TimelineView: View {
     
     @Binding private var state: TimelineState
     @Binding private var tracks: [Track]
+    @Binding private var recordingTrack: Track?
     @Binding private var isRecording: Bool
     @Binding private var time: TimeInterval
     
-    public init(state: Binding<TimelineState>, tracks: Binding<[Track]>, isRecording: Binding<Bool>, time: Binding<TimeInterval>, zoom: CGFloat = 20) {
+    public init(
+        state: Binding<TimelineState>,
+        tracks: Binding<[Track]>,
+        recordingTrack: Binding<Track?>,
+        isRecording: Binding<Bool>,
+        time: Binding<TimeInterval>,
+        zoom: CGFloat = 20
+    ) {
         self._state = state
         self._tracks = tracks
+        self._recordingTrack = recordingTrack
         self._isRecording = isRecording
         self._time = time
         self.zoom = zoom
@@ -25,9 +34,16 @@ public struct TimelineView: View {
             ScrollView {
                 ZStack(alignment: .topLeading) {
                     VStack(alignment: .leading) {
+                        if recordingTrack != nil {
+                            // Workaround for not being able to use if-let in view builders
+                            HStack {
+                                TrackView(track: recordingTrack!, isLive: true, zoom: self.zoom, height: self.trackHeight)
+                                Spacer()
+                            }
+                        }
                         ForEach(tracks) { track in
                             HStack {
-                                TrackView(track: track, zoom: self.zoom, height: self.trackHeight)
+                                TrackView(track: track, isLive: false, zoom: self.zoom, height: self.trackHeight)
                                 Spacer()
                             }
                         }
