@@ -3,18 +3,15 @@
 import SwiftUI
 import PlaygroundSupport
 
-let synthesizer: Synthesizer
-
-do {
-    synthesizer = try Synthesizer()
-} catch {
-    fatalError("Could not create synthesizer: \(error)")
-}
-
 struct MiniJamView: View {
+    private static let synthesizer = try! Synthesizer()
+    private static let baseOctave: Int = 4
+    
     @State private var tracks: [Track] = []
     @State private var autoChord: ChordTemplate = .none
     @State private var progression: ProgressionTemplate = .none
+    @State private var scale: ScaleTemplate = .chromatic
+    @State private var key: Note = Note(.c, Self.baseOctave)
 
     var body: some View {
         VStack(spacing: 20) {
@@ -23,27 +20,20 @@ struct MiniJamView: View {
                 .fontWeight(.light)
             TimelineView(tracks: $tracks)
             PianoView(
-                notes: Note(.c, 4)..<Note(.c, 6),
-                autoChord: $autoChord,
-                synthesizer: synthesizer,
+                notes: Note(.c, Self.baseOctave)..<Note(.c, Self.baseOctave + 2),
+                chordTemplate: $autoChord,
+                scaleTemplate: $scale,
+                progressionTemplate: $progression,
+                key: $key,
+                synthesizer: Self.synthesizer,
                 whiteKeySize: CGSize(width: 40, height: 150),
                 blackKeySize: CGSize(width: 20, height: 100)
             )
-            Picker(selection: $autoChord, label: Text("Auto-Chord")) {
-                ForEach(0..<ChordTemplate.allCases.count) {
-                    let template = ChordTemplate.allCases[$0]
-                    return Text(template.rawValue).tag(template)
-                }
+            VStack {
+                EnumPicker(selection: $autoChord, label: Text("Auto-Chord"))
+                EnumPicker(selection: $scale, label: Text("Scale"))
+                EnumPicker(selection: $progression, label: Text("Progression"))
             }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(width: 500)
-            Picker(selection: $progression, label: Text("Progression")) {
-                ForEach(0..<ProgressionTemplate.allCases.count) {
-                    let template = ProgressionTemplate.allCases[$0]
-                    return Text(template.rawValue).tag(template)
-                }
-            }
-                .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 500)
             Text("Tap the keys to play!")
                 .foregroundColor(.gray)

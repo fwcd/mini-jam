@@ -7,17 +7,35 @@ public struct PianoView: View {
     private let whiteKeySize: CGSize
     private let blackKeySize: CGSize
     
-    @Binding private var autoChord: ChordTemplate
+    @Binding private var chordTemplate: ChordTemplate
+    @Binding private var scaleTemplate: ScaleTemplate
+    @Binding private var progressionTemplate: ProgressionTemplate
+    @Binding private var key: Note
     @GestureState private var pressedKey: Note? = nil
     @State private var playingNotes: Set<Note> = []
     
     private var pressedNotes: Set<Note> {
-        pressedKey.map { Set(autoChord.from(root: $0).notes) } ?? Set()
+        pressedKey.map { Set(chordTemplate.from(root: $0).notes) } ?? Set()
+    }
+    private var scale: Scale {
+        scaleTemplate.from(key: key)
     }
     
-    public init<S>(notes: S, autoChord: Binding<ChordTemplate>, synthesizer: Synthesizer, whiteKeySize: CGSize = CGSize(width: 20, height: 100), blackKeySize: CGSize = CGSize(width: 10, height: 80)) where S: Sequence, S.Element == Note {
+    public init<S>(
+        notes: S,
+        chordTemplate: Binding<ChordTemplate>,
+        scaleTemplate: Binding<ScaleTemplate>,
+        progressionTemplate: Binding<ProgressionTemplate>,
+        key: Binding<Note>,
+        synthesizer: Synthesizer,
+        whiteKeySize: CGSize = CGSize(width: 20, height: 100),
+        blackKeySize: CGSize = CGSize(width: 10, height: 80)
+    ) where S: Sequence, S.Element == Note {
         self.notes = Array(notes)
-        self._autoChord = autoChord
+        self._chordTemplate = chordTemplate
+        self._scaleTemplate = scaleTemplate
+        self._progressionTemplate = progressionTemplate
+        self._key = key
         self.synthesizer = synthesizer
         self.whiteKeySize = whiteKeySize
         self.blackKeySize = blackKeySize

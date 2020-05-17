@@ -1,7 +1,7 @@
 /// An octaved note.
 public struct Note: CustomStringConvertible, Hashable, Identifiable, Comparable, Strideable {
-    public let noteClass: NoteClass
-    public let octave: Int
+    public var noteClass: NoteClass
+    public var octave: Int
     
     public var description: String { "\(noteClass)\(octave)" }
     public var numValue: Int { (octave * NoteClass.allCases.count) + noteClass.rawValue }
